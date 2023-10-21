@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  db:
+  dev-db:
     image: postgres:13
     ports:
       - '5432:5432'
@@ -12,5 +12,16 @@ services:
     networks:
       - bookmarkit
 
+  test-db:
+    image: postgres:13
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+
+    networks:
+      - bookmarkit
 networks:
   bookmarkit:
