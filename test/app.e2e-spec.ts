@@ -29,10 +29,6 @@ describe('App E2E', () => {
     pactum.request.setBaseUrl('http://localhost:5000');
   });
 
-  afterAll(async () => {
-    await app.close();
-  });
-
   describe('Auth', () => {
     const dto: AuthDTO = {
       email: 'omar@test.com',
@@ -126,9 +122,27 @@ describe('App E2E', () => {
             Authorization: 'Bearer $S{userAt}',
           })
           .withBody(dto)
+          .expectStatus(200);
+      });
+    });
+  });
+
+  describe('Bookmark', () => {
+    describe('Get bookmarks', () => {
+      it('should get bookmarks', async () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
           .expectStatus(200)
           .inspect();
       });
     });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });
