@@ -140,6 +140,25 @@ describe('App E2E', () => {
           .inspect();
       });
     });
+
+    describe('Create bookmark', () => {
+      it('should create bookmark', async () => {
+        const dto = {
+          url: 'https://nestjs.com',
+          title: 'NestJS',
+          description: 'NestJS Framework',
+        };
+        return pactum
+          .spec()
+          .post('/bookmarks')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withBody(dto)
+          .expectStatus(201)
+          .inspect();
+      });
+    });
   });
 
   afterAll(async () => {
