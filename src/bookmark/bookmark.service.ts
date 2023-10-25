@@ -43,4 +43,14 @@ export class BookmarkService {
       data: { ...updateBookmarkDto },
     });
   }
+
+  async deleteBookmark(userId: number, bookmarkId: number) {
+    const bookmark = await this.getBookmark(userId, bookmarkId);
+
+    if (!bookmark || bookmark.userId !== userId) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    await this.prisma.bookmark.delete({ where: { id: bookmarkId } });
+  }
 }

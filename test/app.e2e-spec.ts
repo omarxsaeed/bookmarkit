@@ -155,7 +155,8 @@ describe('App E2E', () => {
           .withHeaders({
             Authorization: 'Bearer $S{userAt}',
           })
-          .expectStatus(200);
+          .expectStatus(200)
+          .expectJsonLength(1);
       });
     });
 
@@ -188,6 +189,30 @@ describe('App E2E', () => {
           })
           .withBody(dto)
           .expectStatus(200);
+      });
+    });
+
+    describe('Delete bookmark', () => {
+      it('should delete a bookmark by id', async () => {
+        return pactum
+          .spec()
+          .delete('/bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(204);
+      });
+
+      it("should get an empty bookmarks' list", async () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200)
+          .expectJsonLength(0);
       });
     });
   });
