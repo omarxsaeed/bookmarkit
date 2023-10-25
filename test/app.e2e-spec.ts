@@ -128,19 +128,6 @@ describe('App E2E', () => {
   });
 
   describe('Bookmark', () => {
-    describe('Get bookmarks', () => {
-      it('should get bookmarks', async () => {
-        return pactum
-          .spec()
-          .get('/bookmarks')
-          .withHeaders({
-            Authorization: 'Bearer $S{userAt}',
-          })
-          .expectStatus(200)
-          .inspect();
-      });
-    });
-
     describe('Create bookmark', () => {
       it('should create bookmark', async () => {
         const dto = {
@@ -156,7 +143,32 @@ describe('App E2E', () => {
           })
           .withBody(dto)
           .expectStatus(201)
-          .inspect();
+          .stores('bookmarkId', 'id');
+      });
+    });
+
+    describe('Get bookmarks', () => {
+      it('should get bookmarks', async () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200);
+      });
+    });
+
+    describe('Get bookmark', () => {
+      it('should get a bookmark by id', async () => {
+        return pactum
+          .spec()
+          .get('/bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200);
       });
     });
   });
