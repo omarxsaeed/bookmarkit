@@ -1,16 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { CreateBookmarkDto } from './dto';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { CreateBookmarkDto, UpdateBookmarkDto } from './dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class BookmarkService {
   constructor(private prisma: PrismaService) {}
-  getBookmarks(userId: number) {
-    return this.prisma.bookmark.findMany({ where: { userId } });
+  async getBookmarks(userId: number) {
+    return await this.prisma.bookmark.findMany({ where: { userId } });
   }
 
-  getBookmark(userId: number, bookmarkId: number) {
-    return this.prisma.bookmark.findUnique({
+  async getBookmark(userId: number, bookmarkId: number) {
+    return await this.prisma.bookmark.findUnique({
       where: { id: bookmarkId, userId },
     });
   }
@@ -23,5 +23,24 @@ export class BookmarkService {
       },
     });
     return bookmark;
+  }
+
+  async updateBookmark(
+    userId: number,
+    bookmarkId: number,
+    updateBookmarkDto: UpdateBookmarkDto,
+  ) {
+    const bookmark = await this.getBookmark(userId, bookmarkId);
+
+    if (!bookmark || bookmark.userId !== userId) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    return this.prisma.bookmark.update({
+      where: {
+        id: bookmarkId,
+      },
+      data: { ...updateBookmarkDto },
+    });
   }
 }

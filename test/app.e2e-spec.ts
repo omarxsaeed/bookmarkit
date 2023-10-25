@@ -5,6 +5,7 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import * as pactum from 'pactum';
 import { AuthDTO } from '../src/auth/dto';
 import { EditUserDTO } from '../src/user/dto';
+import { UpdateBookmarkDto } from '../src/bookmark/dto';
 
 describe('App E2E', () => {
   let app: INestApplication;
@@ -133,7 +134,6 @@ describe('App E2E', () => {
         const dto = {
           url: 'https://nestjs.com',
           title: 'NestJS',
-          description: 'NestJS Framework',
         };
         return pactum
           .spec()
@@ -168,6 +168,25 @@ describe('App E2E', () => {
           .withHeaders({
             Authorization: 'Bearer $S{userAt}',
           })
+          .expectStatus(200);
+      });
+    });
+
+    describe('Update bookmark', () => {
+      const dto: UpdateBookmarkDto = {
+        title: 'NestJS framework',
+        description:
+          'A progressive Node.js framework for building efficient, reliable and scalable server-side applications.',
+      };
+      it('should update a bookmark by id', async () => {
+        return pactum
+          .spec()
+          .patch('/bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withBody(dto)
           .expectStatus(200);
       });
     });

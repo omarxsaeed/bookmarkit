@@ -4,13 +4,14 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { JwtGuard } from '../auth/guard';
 import { BookmarkService } from './bookmark.service';
 import { GetUser } from '../auth/decorator';
-import { CreateBookmarkDto } from './dto';
+import { CreateBookmarkDto, UpdateBookmarkDto } from './dto';
 
 @UseGuards(JwtGuard)
 @Controller('bookmarks')
@@ -36,5 +37,18 @@ export class BookmarkController {
     @Body() createBookmarkDto: CreateBookmarkDto,
   ) {
     return this.bookmarkService.createBookmark(userId, createBookmarkDto);
+  }
+
+  @Patch(':id')
+  updateBookmark(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) bookmarkId: number,
+    @Body() updateBookmarkDto: UpdateBookmarkDto,
+  ) {
+    return this.bookmarkService.updateBookmark(
+      userId,
+      bookmarkId,
+      updateBookmarkDto,
+    );
   }
 }
